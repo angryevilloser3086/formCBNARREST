@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../src/utils/shared_pref.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:location/location.dart';
 import '../firebase_options.dart';
@@ -18,7 +19,7 @@ class FormScreen extends StatefulWidget {
 
 class _FormScreenState extends State<FormScreen> {
   ApiRequest apiRequest = ApiRequest();
-
+  SharedPref sharedPref = SharedPref();
   TextEditingController name = TextEditingController();
   TextEditingController number = TextEditingController();
   List<String> q1Options = ["please select the given options", "Yes", "No"];
@@ -236,6 +237,19 @@ class _FormScreenState extends State<FormScreen> {
   int selectedq4Radio = -1;
   int selectedq5Radio = -1;
   int selectedq6Radio = -1;
+  String vName = '';
+  String vNum='';
+  
+  @override
+  initState(){
+    init();
+    super.initState();
+  }
+
+  init()async{
+   vName= await sharedPref.read("name");
+   vName= await sharedPref.read("name");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -871,7 +885,9 @@ class _FormScreenState extends State<FormScreen> {
         "Phone Number of the Responder": number.text,
         "Which Constituency do you belong to?": q6Answer,
         "Longitude": ld.longitude,
-        "Latitude": ld.latitude
+        "Latitude": ld.latitude,
+        "vname":vName,
+        "vnum":vNum
       };
     });
     // apiRequest.uploadRTDB(answers).then((value) {
