@@ -46,6 +46,7 @@ class _FormScreenState extends State<FormScreen> {
   ];
 
   List<String> q6Options = [
+    "Please select your constituency",
     'Araku Valley/అరకు లోయ',
     'Paderu/పాడేరు',
     'Rampachodavaram/రంపచోడవరం',
@@ -241,7 +242,7 @@ class _FormScreenState extends State<FormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.purpleAccent[100],
+        backgroundColor: Colors.yellowAccent,
         centerTitle: true,
         title: Text("Public Opinion CBN Arrest",
             style: GoogleFonts.poppins(
@@ -249,7 +250,7 @@ class _FormScreenState extends State<FormScreen> {
                 fontSize: 20,
                 fontWeight: FontWeight.w900)),
       ),
-      backgroundColor: Colors.purpleAccent[100],
+      backgroundColor: Colors.yellowAccent,
       body: SafeArea(
           child: SingleChildScrollView(
         child: Padding(
@@ -281,8 +282,8 @@ class _FormScreenState extends State<FormScreen> {
                 AppConstants.h_10,
                 InkWell(
                   onTap: () {
-                   //if(name.text.isNotEmpty&& number.text.isNotEmpty&&q1Answer.isNotEmpty&&q2Answer.isNotEmpty)
-                  updateDetails();
+                    //if(name.text.isNotEmpty&& number.text.isNotEmpty&&q1Answer.isNotEmpty&&q2Answer.isNotEmpty)
+                    updateDetails();
                   },
                   child: btn(context, "Submit"),
                 )
@@ -696,8 +697,6 @@ class _FormScreenState extends State<FormScreen> {
       child: Padding(
         padding: AppConstants.all_5,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Align(
               alignment: Alignment.topLeft,
@@ -707,42 +706,38 @@ class _FormScreenState extends State<FormScreen> {
                       fontSize: 20,
                       fontWeight: FontWeight.w500)),
             ),
-            Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: q6Options.length,
-                    itemBuilder: (context, index) {
-                      return SizedBox(
-                        width: 150,
-                        child: ListTileTheme(
-                          minLeadingWidth: 0,
-                          minVerticalPadding: 0,
-                          horizontalTitleGap: 5,
-                          child: RadioListTile<int>(
-                            contentPadding: AppConstants.leftRight_5,
-                            value: index,
-                            groupValue: selectedq6Radio,
-                            activeColor: Colors.black,
-                            onChanged: (int? val) {
-                              setState(() {
-                                selectedq6Radio = val!;
-                                q6Answer = q6Options[index];
-                              });
-                            },
-                            title: Text(
-                              q6Options[index],
+            AppConstants.h_10,
+            Container(
+              width: MediaQuery.of(context).size.width,
+              decoration: AppConstants.boxBorderDecoration2,
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton(
+                    dropdownColor: Colors.white,
+                    borderRadius: AppConstants.boxRadius8,
+                    iconDisabledColor: Colors.black,
+                    iconEnabledColor: Colors.black,
+                    isExpanded: true,
+                    value: q6Answer.isEmpty ? q6Options.first : q6Answer,
+                    items:
+                        q6Options.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Padding(
+                          padding: AppConstants.all_10,
+                          child: Text(value,
                               style: GoogleFonts.inter(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black)),
                         ),
                       );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        q6Answer = value!;
+                      });
                     }),
-              ],
+              ),
             ),
           ],
         ),
@@ -859,7 +854,7 @@ class _FormScreenState extends State<FormScreen> {
           options: DefaultFirebaseOptions.currentPlatform,
         ),
         databaseURL: apiRequest.dbUrl);
-  
+
     Map<String, dynamic> answers = {};
     setState(() {
       answers = {
@@ -881,14 +876,19 @@ class _FormScreenState extends State<FormScreen> {
     // },).catchError((err){
     //   AppConstants.showSnackBar(context, "$err");
     // });
-    String s =dt.toIso8601String().splitMapJoin(".",onMatch: (p0) {
-      return ":";
-    },);
-   
-    databaseReference
-        .ref("/cbn_arrest")
-        .child(s)
-        .set(answers);
+    String s = dt.toIso8601String().splitMapJoin(
+      ".",
+      onMatch: (p0) {
+        return ":";
+      },
+    );
+
+    databaseReference.ref("/cbn_arrest").child(s).set(answers).then((value) {
+      AppConstants.showSnackBar(context, "Thanks for the Feedback");
+      AppConstants.moveNextClearAll(context, const FormScreen());
+    }).catchError((err) {
+      AppConstants.showSnackBar(context, "$err");
+    });
     // print(jsonEncode(answers));
   }
 
