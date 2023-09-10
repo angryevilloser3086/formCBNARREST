@@ -37,7 +37,6 @@ class _FormScreenState extends State<FormScreen> {
     "Unaware of Police behaviour"
   ];
   List<String> q5Options = [
-    "please select the given options",
     "To keep him jailed at least for 2 days before CBN gets Bail",
     "To hurt him in Police custody",
     "No logical reason for Saturday's arrest",
@@ -244,11 +243,11 @@ class _FormScreenState extends State<FormScreen> {
       appBar: AppBar(
         backgroundColor: Colors.yellowAccent,
         centerTitle: true,
-        title: Text("Public Opinion CBN Arrest",
+        title: Text("Public Opinion on CBN Arrest",
             style: GoogleFonts.poppins(
                 color: Colors.black,
                 fontSize: 20,
-                fontWeight: FontWeight.w900)),
+                fontWeight: FontWeight.w700)),
       ),
       backgroundColor: Colors.yellowAccent,
       body: SafeArea(
@@ -473,6 +472,7 @@ class _FormScreenState extends State<FormScreen> {
               children: [
                 ListView.builder(
                     shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: q2Options.length,
                     itemBuilder: (context, index) {
                       return SizedBox(
@@ -533,6 +533,7 @@ class _FormScreenState extends State<FormScreen> {
               children: [
                 ListView.builder(
                     shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: q3Options.length,
                     itemBuilder: (context, index) {
                       return SizedBox(
@@ -593,6 +594,7 @@ class _FormScreenState extends State<FormScreen> {
               children: [
                 ListView.builder(
                     shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: q4Options.length,
                     itemBuilder: (context, index) {
                       return SizedBox(
@@ -653,6 +655,7 @@ class _FormScreenState extends State<FormScreen> {
               children: [
                 ListView.builder(
                     shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: q5Options.length,
                     itemBuilder: (context, index) {
                       return SizedBox(
