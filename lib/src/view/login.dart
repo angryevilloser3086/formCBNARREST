@@ -248,7 +248,6 @@ class _LoginScreenState extends State<LoginScreen>
                         borderSide: BorderSide(color: AppConstants.appBgLite),
                         borderRadius: AppConstants.boxRadius8)),
                 keyboardType: TextInputType.emailAddress,
-                maxLength: 30,
                 inputFormatters: [
                   FilteringTextInputFormatter.singleLineFormatter
                 ],
