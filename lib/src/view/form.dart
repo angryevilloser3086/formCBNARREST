@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +21,8 @@ class _FormScreenState extends State<FormScreen> {
   SharedPref sharedPref = SharedPref();
   TextEditingController name = TextEditingController();
   TextEditingController number = TextEditingController();
+  TextEditingController vName = TextEditingController();
+  TextEditingController vMail = TextEditingController();
   List<String> q1Options = ["please select the given options", "Yes", "No"];
   List<String> q2Options = ["It is Correct", "It is Wrong", "No opinion"];
   List<String> q3Options = [
@@ -237,18 +238,25 @@ class _FormScreenState extends State<FormScreen> {
   int selectedq4Radio = -1;
   int selectedq5Radio = -1;
   int selectedq6Radio = -1;
-  String vName = '';
-  String vNum='';
-  
+  String vNam = '';
+  String vNum = '';
+
   @override
-  initState(){
+  initState() {
     init();
     super.initState();
   }
 
-  init()async{
-   vName= await sharedPref.read("name");
-   vName= await sharedPref.read("name");
+  init() async {
+    vNam = await sharedPref.read("name");
+     vNum = await sharedPref.read("mail");
+    setState(() {
+      vName = TextEditingController(text: vNam);
+      vMail = TextEditingController(text: vNum);
+    });
+   
+    
+    print(vNam + vName.text);
   }
 
   @override
@@ -271,6 +279,8 @@ class _FormScreenState extends State<FormScreen> {
           child: Form(
             child: Column(
               children: [
+                p3VNAME(context, "Name of the Volunteer"),
+                p3VMail(context, "Mail of the Volunteer"),
                 p3q6(context, "Name of the responder"),
                 p4q1(context,
                     "Do you know about the arrest of Chandra Babu Naidu?"),
@@ -372,7 +382,160 @@ class _FormScreenState extends State<FormScreen> {
                         borderSide: BorderSide(color: AppConstants.appBgLite),
                         borderRadius: AppConstants.boxRadius8)),
                 keyboardType: TextInputType.multiline,
-                maxLength: 40,
+                inputFormatters: [
+                  FilteringTextInputFormatter.singleLineFormatter
+                ],
+                //controller: addNewPeople.fnameController,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  p3VNAME(BuildContext context, String title) {
+    return Card(
+      elevation: 10,
+      child: Padding(
+        padding: AppConstants.all_5,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: Text(title,
+                  style: GoogleFonts.poppins(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500)),
+            ),
+            SizedBox(
+              height: 75,
+              width: MediaQuery.of(context).size.width,
+              child: TextFormField(
+                controller: vName,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                textCapitalization: TextCapitalization.sentences,
+                autofocus: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the Answer';
+                  }
+                  return null;
+                },
+                onEditingComplete: () {
+                  FocusScope.of(context).nextFocus();
+                  //addNewPeople.formKey.currentState!.validate();
+                },
+                textAlign: TextAlign.justify,
+                style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black),
+                decoration: InputDecoration(
+                    // contentPadding: AppConstants.all_5,
+                    fillColor: Colors.white,
+                    filled: true,
+                    counterStyle: Theme.of(context).textTheme.bodySmall,
+                    counterText: "",
+                    hintText: "Enter Answer",
+                    errorStyle: GoogleFonts.inter(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.red),
+                    hintStyle: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w200,
+                        color: Colors.black),
+                    enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: AppConstants.appBgLite),
+                        borderRadius: AppConstants.boxRadius8),
+                    focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: AppConstants.appBgLite),
+                        borderRadius: AppConstants.boxRadius8),
+                    border: const OutlineInputBorder(
+                        borderSide: BorderSide(color: AppConstants.appBgLite),
+                        borderRadius: AppConstants.boxRadius8)),
+                keyboardType: TextInputType.multiline,
+
+                inputFormatters: [
+                  FilteringTextInputFormatter.singleLineFormatter
+                ],
+                //controller: addNewPeople.fnameController,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  p3VMail(BuildContext context, String title) {
+    return Card(
+      elevation: 10,
+      child: Padding(
+        padding: AppConstants.all_5,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: Text(title,
+                  style: GoogleFonts.poppins(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500)),
+            ),
+            SizedBox(
+              height: 75,
+              width: MediaQuery.of(context).size.width,
+              child: TextFormField(
+                controller: vMail,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                textCapitalization: TextCapitalization.sentences,
+                autofocus: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the Answer';
+                  }
+                  return null;
+                },
+                onEditingComplete: () {
+                  FocusScope.of(context).nextFocus();
+                  //addNewPeople.formKey.currentState!.validate();
+                },
+                textAlign: TextAlign.justify,
+                style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black),
+                decoration: InputDecoration(
+                    // contentPadding: AppConstants.all_5,
+                    fillColor: Colors.white,
+                    filled: true,
+                    counterStyle: Theme.of(context).textTheme.bodySmall,
+                    counterText: "",
+                    hintText: "Enter Answer",
+                    errorStyle: GoogleFonts.inter(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.red),
+                    hintStyle: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w200,
+                        color: Colors.black),
+                    enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: AppConstants.appBgLite),
+                        borderRadius: AppConstants.boxRadius8),
+                    focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: AppConstants.appBgLite),
+                        borderRadius: AppConstants.boxRadius8),
+                    border: const OutlineInputBorder(
+                        borderSide: BorderSide(color: AppConstants.appBgLite),
+                        borderRadius: AppConstants.boxRadius8)),
+                keyboardType: TextInputType.multiline,
+
                 inputFormatters: [
                   FilteringTextInputFormatter.singleLineFormatter
                 ],
@@ -886,15 +1049,10 @@ class _FormScreenState extends State<FormScreen> {
         "Which Constituency do you belong to?": q6Answer,
         "Longitude": ld.longitude,
         "Latitude": ld.latitude,
-        "vname":vName,
-        "vnum":vNum
+        "vname": vName.text,
+        "vMail": vMail.text
       };
     });
-    // apiRequest.uploadRTDB(answers).then((value) {
-    //   AppConstants.moveNextClearAll(context,const FormScreen());
-    // },).catchError((err){
-    //   AppConstants.showSnackBar(context, "$err");
-    // });
     String s = dt.toIso8601String().splitMapJoin(
       ".",
       onMatch: (p0) {

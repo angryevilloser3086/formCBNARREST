@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen>
     if (_formKey.currentState!.validate()) {
       setState(() {
         sharedPref.save("name", name.text);
-        sharedPref.save("num", name.text);
+        sharedPref.save("mail", number.text);
       });
       AppConstants.moveNextClearAll(context, const FormScreen());
     } else {
