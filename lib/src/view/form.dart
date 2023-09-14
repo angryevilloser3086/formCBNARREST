@@ -938,12 +938,12 @@ class _FormScreenState extends State<FormScreen> {
                             activeColor: Colors.black,
                             onChanged: (int? val) {
                               setState(() {
-                                selectedq5Radio = val!;
+                                selectedq6Radio = val!;
                                 q6Answer = q6Options[index];
                               });
                             },
                             title: Text(
-                              q5Options[index],
+                              q6Options[index],
                               style: GoogleFonts.inter(
                                   color: Colors.black,
                                   fontSize: 15,
