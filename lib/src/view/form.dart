@@ -292,7 +292,7 @@ class _FormScreenState extends State<FormScreen> {
             "సీబీఎన్ అరెస్టుపై ప్రజాభిప్రాయం/Public Opinion on CBN Arrest",
             style: GoogleFonts.poppins(
                 color: Colors.black,
-                fontSize: 20,
+                fontSize: 16,
                 fontWeight: FontWeight.w700)),
       ),
       backgroundColor: Colors.yellowAccent,
@@ -1126,12 +1126,16 @@ class _FormScreenState extends State<FormScreen> {
         longitude = ld.longitude.toString();
       });
     }
-    if (Platform.isAndroid || Platform.isIOS) {
-      Position pos = await determinePosition();
-      setState(() {
-        lat = pos.latitude.toString();
-        longitude = pos.longitude.toString();
-      });
+    print("lat:$lat");
+    print("long:$longitude");
+    if (!kIsWeb) {
+      if (Platform.isAndroid || Platform.isIOS) {
+        Position pos = await determinePosition();
+        setState(() {
+          lat = pos.latitude.toString();
+          longitude = pos.longitude.toString();
+        });
+      }
     }
 
     final databaseReference = FirebaseDatabase.instanceFor(

@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen>
                       "సీబీఎన్ అరెస్టుపై ప్రజాభిప్రాయం/Public Opinion on CBN Arrest",
                       style: GoogleFonts.poppins(
                           color: Colors.black,
-                          fontSize: 30,
+                          fontSize: 16,
                           fontWeight: FontWeight.w900)),
                 ),
                 p3q1(context,

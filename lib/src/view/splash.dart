@@ -37,6 +37,11 @@ class _SplashScreenState extends State<SplashScreen> {
           AppConstants.moveNextstl(context, const LoginScreen());
         });
       }
+    }).catchError((err){
+      setState(() {
+          showLoader = false;
+          AppConstants.moveNextstl(context, const LoginScreen());
+        });
     });
   }
 
