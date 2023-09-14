@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_form/src/utils/shared_pref.dart';
-import 'package:flutter_form/src/view/form.dart';
+import '/src/utils/shared_pref.dart';
+import '/src/view/form.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../utils/app_utils.dart';
@@ -46,14 +46,17 @@ class _LoginScreenState extends State<LoginScreen>
               children: [
                 Align(
                   alignment: Alignment.center,
-                  child: Text("Welcome!!",
+                  child: Text(
+                      "సీబీఎన్ అరెస్టుపై ప్రజాభిప్రాయం/Public Opinion on CBN Arrest",
                       style: GoogleFonts.poppins(
                           color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500)),
+                          fontSize: 30,
+                          fontWeight: FontWeight.w900)),
                 ),
-                p3q1(context, "Please Enter the Name"),
-                p3q2(context, "Please Enter your Mail"),
+                p3q1(context,
+                    "దయచేసి పేరును నమోదు చేయండి/Please Enter the Name"),
+                p3q2(context,
+                    "దయచేసి మీ మెయిల్‌ని నమోదు చేయండి/Please Enter your Mail"),
                 InkWell(
                   onTap: () {
                     saveDetails();

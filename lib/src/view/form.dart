@@ -23,27 +23,37 @@ class _FormScreenState extends State<FormScreen> {
   TextEditingController number = TextEditingController();
   TextEditingController vName = TextEditingController();
   TextEditingController vMail = TextEditingController();
-  List<String> q1Options = ["please select the given options", "Yes", "No"];
-  List<String> q2Options = ["It is Correct", "It is Wrong", "No opinion"];
+  List<String> q1Options = [
+    "please select the given options/దయచేసి ఇచ్చిన ఎంపికలను ఎంచుకోండి",
+    "అవును/Yes",
+    "కాదు/No"
+  ];
+  List<String> q2Options = [
+    "It is Correct/ఇది సరైనది",
+    "It is Wrong/ఇది తప్పు",
+    "No opinion/అభిప్రాయం లేదు"
+  ];
   List<String> q3Options = [
-    "Politically motivated",
-    "Jagan is afraid of his defeat",
-    "Tit for Tat for Jagan's arrest",
-    "Genuine Arrest",
-    "Chandra Babu Naidu was involved in corruption",
-    "No Opinion"
+    "రాజకీయంగా ప్రేరేపించబడింది/Politically motivated",
+    "జగన్ కి ఓటమి భయం పట్టుకుంది/Jagan is afraid of his defeat",
+    "జగన్ అరెస్టుకు టిట్ ఫర్ టాట్/Tit for Tat for Jagan's arrest",
+    "న్యాయబద్దమైన అరెస్ట్../Genuine Arrest",
+    "చంద్రబాబు నాయుడు అవినీతికి పాల్పడ్డాడు/Chandra Babu Naidu was involved in corruption",
+    "అభిప్రాయం లేదు/No Opinion"
   ];
+
   List<String> q4Options = [
-    "Police acted Extreme and were ruthless in their behaviour during arrest",
-    "Followed rules",
-    "Unaware of Police behaviour"
+    "పోలీసులు విపరీతంగా వ్యవహరించారు మరియు అరెస్టు సమయంలో నిర్దాక్షిణ్యంగా వ్యవహరించారు/Police acted Extreme and were ruthless in their behaviour during arrest",
+    "వారు నియమాలను అనుసరించారు/Followed rules",
+    "పోలీసుల ప్రవర్తన గురించి తెలియదు/Unaware of Police behaviour"
   ];
+
   List<String> q5Options = [
-    "To keep him jailed at least for 2 days before CBN gets Bail",
-    "To hurt him in Police custody",
-    "No logical reason for Saturday's arrest",
-    "Jagan's Government wanted to take swift action against Chandra Babu Naidu",
-    "No Opinion"
+    "సీబీఎన్ కు బెయిల్ రాకముందే కనీసం 2 రోజులు జైల్లో ఉంచాలని/To keep him jailed at least for 2 days before CBN gets Bail",
+    "పోలీసు కస్టడీలో అతనిని గాయపరచడానికి/To hurt him in Police custody",
+    "శనివారం అరెస్టుకు సరైన  కారణం లేదు/No logical reason for Saturday's arrest",
+    "చంద్రబాబు నాయుడిపై సత్వర చర్యలు తీసుకోవాలని జగన్ సర్కార్ భావించింది/Jagan's Government wanted to take swift action against Chandrababu Naidu",
+    "అభిప్రాయం లేదు/No Opinion"
   ];
 
   List<String> q6Options = [
@@ -249,13 +259,12 @@ class _FormScreenState extends State<FormScreen> {
 
   init() async {
     vNam = await sharedPref.read("name");
-     vNum = await sharedPref.read("mail");
+    vNum = await sharedPref.read("mail");
     setState(() {
       vName = TextEditingController(text: vNam);
       vMail = TextEditingController(text: vNum);
     });
-   
-    
+
     print(vNam + vName.text);
   }
 
@@ -265,7 +274,9 @@ class _FormScreenState extends State<FormScreen> {
       appBar: AppBar(
         backgroundColor: Colors.yellowAccent,
         centerTitle: true,
-        title: Text("Public Opinion on CBN Arrest",
+        automaticallyImplyLeading: false,
+        title: Text(
+            "సీబీఎన్ అరెస్టుపై ప్రజాభిప్రాయం/Public Opinion on CBN Arrest",
             style: GoogleFonts.poppins(
                 color: Colors.black,
                 fontSize: 20,
@@ -279,29 +290,31 @@ class _FormScreenState extends State<FormScreen> {
           child: Form(
             child: Column(
               children: [
-                p3VNAME(context, "Name of the Volunteer"),
-                p3VMail(context, "Mail of the Volunteer"),
-                p3q6(context, "Name of the responder"),
+                p3VNAME(context, "వాలంటీర్ పేరు/Name of the Volunteer"),
+                p3VMail(context, "వాలంటీర్ యొక్క మెయిల్/Mail of the Volunteer"),
+                p3q6(context, "ప్రతిస్పందనదారు పేరు/Name of the responder"),
                 p4q1(context,
-                    "Do you know about the arrest of Chandra Babu Naidu?"),
+                    "చంద్రబాబు నాయుడు అరెస్టు గురించి మీకు తెలుసా?/Do you know about the arrest of Chandra Babu Naidu?"),
                 p4q2(
                   context,
-                  "What do you think about the arrest of Chandra Babu Naidu?",
+                  "చంద్రబాబు నాయుడు అరెస్టుపై మీరేమంటారు?/What do you think about the arrest of Chandra Babu Naidu?",
                 ),
                 p4q3(
                   context,
-                  "What do you think is the motive behind his arrest? *",
+                  "అతని అరెస్టు వెనుక ఉద్దేశ్యం ఏమిటని మీరు అనుకుంటున్నారు?/What do you think is the motive behind his arrest?",
                 ),
                 p4q4(
                   context,
-                  "How did the Police behave during his arrest?",
+                  "అరెస్టు సమయంలో పోలీసులు ఎలా ప్రవర్తించారు?/How did the Police behave during his arrest?",
                 ),
                 p4q5(
                   context,
-                  "Why do you think the Police arrested CBN on Saturday?",
+                  "శనివారం సీబీఎన్ ను పోలీసులు ఎందుకు అరెస్టు చేశారు?/Why do you think the Police arrested CBN on Saturday?",
                 ),
-                p4q7(context, "Phone Number of the Responder"),
-                p4q6(context, "Which Constituency do you belong to?"),
+                p4q7(context,
+                    "ప్రతిస్పందించే వ్యక్తి యొక్క ఫోన్ నెంబరు/Phone Number of the Responder"),
+                p4q6(context,
+                    "మీరు ఏ నియోజకవర్గానికి చెందినవారు?/Which Constituency do you belong to?"),
                 AppConstants.h_10,
                 InkWell(
                   onTap: () {
@@ -586,7 +599,7 @@ class _FormScreenState extends State<FormScreen> {
                         });
                       },
                       title: Text(
-                        "Yes",
+                        "అవును/Yes",
                         style: GoogleFonts.inter(
                             color: Colors.black,
                             fontSize: 15,
@@ -611,7 +624,7 @@ class _FormScreenState extends State<FormScreen> {
                           q1Answer = "No";
                         });
                       },
-                      title: Text("No",
+                      title: Text("కాదు/No",
                           style: GoogleFonts.inter(
                               color: Colors.black,
                               fontSize: 15,
