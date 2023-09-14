@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../src/utils/shared_pref.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:location/location.dart';
@@ -29,17 +33,17 @@ class _FormScreenState extends State<FormScreen> {
     "కాదు/No"
   ];
   List<String> q2Options = [
-    "It is Correct/ఇది సరైనది",
-    "It is Wrong/ఇది తప్పు",
-    "No opinion/అభిప్రాయం లేదు"
+    "ఇది సరైనది/It is Correct",
+    "ఇది తప్పు/It is Wrong",
+    "అభిప్రాయం లేదు/No opinion"
   ];
   List<String> q3Options = [
-    "రాజకీయంగా ప్రేరేపించబడింది/Politically motivated",
-    "జగన్ కి ఓటమి భయం పట్టుకుంది/Jagan is afraid of his defeat",
-    "జగన్ అరెస్టుకు టిట్ ఫర్ టాట్/Tit for Tat for Jagan's arrest",
-    "న్యాయబద్దమైన అరెస్ట్../Genuine Arrest",
-    "చంద్రబాబు నాయుడు అవినీతికి పాల్పడ్డాడు/Chandra Babu Naidu was involved in corruption",
-    "అభిప్రాయం లేదు/No Opinion"
+    "చంద్ర బాబు నాయుడు ప్రభుత్వ దౌర్జన్యాలను ప్రశ్నిస్తున్నారు/Questioning the atrocities of government.",
+    "కేంద్రంలో బీజేపీ ప్రభావంతో జగన్ చంద్ర బాబు నాయుడును అరెస్ట్ చేయించారు/ Jagan was influenced by BJP at centre to arrest Chandra Babu Naidu.",
+    "చంద్ర బాబు నాయుడుకు ప్ర‌జ‌ల నుంచి సానుకూల స్పంద‌న రావ‌డం జ‌గ‌న్ త‌ట్టుకోలేక పోతున్నాడు/Jagan is unable to tolerate the positive response from public to Chandra Babu Naidu.",
+    "నాయకత్వాన్ని బలహీనపరిచి టీడీపీని అంతం చేయాలని జగన్ వ్యూహాలు రచిస్తున్నారు/Jagan is plotting to put an end to TDP by breaking the leadership.",
+    "జగన్ అహంకార ధోరణి ఈ అరెస్ట్ నిదర్శనం/Ego centric attitude of Jagan let this arrest happen.",
+    "చంద్ర బాబు నాయుడుకు వ్యతిరేకంగా ప్రభుత్వం బలమైన సాక్ష్యాలను సేకరించింది/Government has actually collected the strong evidences against Chandra Babu Naidu."
   ];
 
   List<String> q4Options = [
@@ -49,14 +53,20 @@ class _FormScreenState extends State<FormScreen> {
   ];
 
   List<String> q5Options = [
-    "సీబీఎన్ కు బెయిల్ రాకముందే కనీసం 2 రోజులు జైల్లో ఉంచాలని/To keep him jailed at least for 2 days before CBN gets Bail",
-    "పోలీసు కస్టడీలో అతనిని గాయపరచడానికి/To hurt him in Police custody",
-    "శనివారం అరెస్టుకు సరైన  కారణం లేదు/No logical reason for Saturday's arrest",
-    "చంద్రబాబు నాయుడిపై సత్వర చర్యలు తీసుకోవాలని జగన్ సర్కార్ భావించింది/Jagan's Government wanted to take swift action against Chandrababu Naidu",
-    "అభిప్రాయం లేదు/No Opinion"
+    "బలమైన కూటమి అయితే,  వైఎస్సార్‌సీపీని ఓడించలేదు/Strong alliance, but YSRCP cannot be defeated",
+    "బలమైన కూటమి,  వైఎస్సార్‌సీపీని ఓడించగలదు/ Strong Alliance, can defeat YSRCP",
+    'వైఎస్సార్‌సీపీ, కూటమిని ఓడించగలదు/YSRCP can defeat the alliance',
+    "చెప్పలేను/Can't say"
   ];
 
   List<String> q6Options = [
+    "అవును/Yes",
+    "కాదు/No",
+    "చెప్పలేను/Can't say",
+    "ఇది కూటమిని బలహీనపరుస్తుంది/It will weaken the alliance"
+  ];
+
+  List<String> q7Options = [
     "Please select your constituency",
     'Araku Valley/అరకు లోయ',
     'Paderu/పాడేరు',
@@ -241,6 +251,7 @@ class _FormScreenState extends State<FormScreen> {
   String q4Answer = '';
   String q5Answer = '';
   String q6Answer = '';
+  String q7Answer = '';
 
   int selectedGRadio = -1;
   int selectedq2Radio = -1;
@@ -248,6 +259,7 @@ class _FormScreenState extends State<FormScreen> {
   int selectedq4Radio = -1;
   int selectedq5Radio = -1;
   int selectedq6Radio = -1;
+  int selectedq7Radio = -1;
   String vNam = '';
   String vNum = '';
   bool enableBTN = true;
@@ -295,26 +307,28 @@ class _FormScreenState extends State<FormScreen> {
                 p3VMail(context, "వాలంటీర్ యొక్క మెయిల్/Mail of the Volunteer"),
                 p3q6(context, "ప్రతిస్పందనదారు పేరు/Name of the responder"),
                 p4q1(context,
-                    "చంద్రబాబు నాయుడు అరెస్టు గురించి మీకు తెలుసా?/Do you know about the arrest of Chandra Babu Naidu?"),
+                    "1. చంద్రబాబు నాయుడు అరెస్టు గురించి మీకు తెలుసా?/Do you know about the arrest of Chandra Babu Naidu?"),
                 p4q2(
                   context,
-                  "చంద్రబాబు నాయుడు అరెస్టుపై మీరేమంటారు?/What do you think about the arrest of Chandra Babu Naidu?",
+                  "2. చంద్రబాబు నాయుడు అరెస్టుపై మీరేమంటారు?/What do you think about the arrest of Chandra Babu Naidu?",
                 ),
                 p4q3(
                   context,
-                  "అతని అరెస్టు వెనుక ఉద్దేశ్యం ఏమిటని మీరు అనుకుంటున్నారు?/What do you think is the motive behind his arrest?",
+                  "3.చంద్ర బాబు నాయుడు ఎందుకు అరెస్ట్ అయ్యార ని అనుకుంటున్నారు?/Why do you think he was arrested?",
                 ),
                 p4q4(
                   context,
-                  "అరెస్టు సమయంలో పోలీసులు ఎలా ప్రవర్తించారు?/How did the Police behave during his arrest?",
+                  "4. అరెస్టు సమయంలో పోలీసులు ఎలా ప్రవర్తించారు?/How did the Police behave during his arrest?",
                 ),
                 p4q5(
                   context,
-                  "శనివారం సీబీఎన్ ను పోలీసులు ఎందుకు అరెస్టు చేశారు?/Why do you think the Police arrested CBN on Saturday?",
+                  "5. టీడీపీ-జేఎస్పీ మధ్య పొత్తు గురించి మీరు ఏమనుకుంటున్నారు?/ What do you think about the alliance between JSP and TDP?",
                 ),
-                p4q7(context,
-                    "ప్రతిస్పందించే వ్యక్తి యొక్క ఫోన్ నెంబరు/Phone Number of the Responder"),
                 p4q6(context,
+                    "6.టీడీపీ-జేఎస్పీ కూటమితో బీజేపీ కలిస్తే పొత్తు బలపడుతుందా?/If BJP join with TDP- JSP alliance, will the alliance be stronger?"),
+                p4q7(context,
+                    "ప్రతిస్పందించే వ్యక్తి యొక్క ఫోన్ నెంబరు/Phone Number of the Responder"),
+                p4q8(context,
                     "మీరు ఏ నియోజకవర్గానికి చెందినవారు?/Which Constituency do you belong to?"),
                 AppConstants.h_10,
                 if (enableBTN)
@@ -892,6 +906,67 @@ class _FormScreenState extends State<FormScreen> {
       child: Padding(
         padding: AppConstants.all_5,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: Text(title,
+                  style: GoogleFonts.poppins(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500)),
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: q6Options.length,
+                    itemBuilder: (context, index) {
+                      return SizedBox(
+                        width: 150,
+                        child: ListTileTheme(
+                          minLeadingWidth: 0,
+                          minVerticalPadding: 0,
+                          horizontalTitleGap: 5,
+                          child: RadioListTile<int>(
+                            contentPadding: AppConstants.leftRight_5,
+                            value: index,
+                            groupValue: selectedq6Radio,
+                            activeColor: Colors.black,
+                            onChanged: (int? val) {
+                              setState(() {
+                                selectedq5Radio = val!;
+                                q6Answer = q6Options[index];
+                              });
+                            },
+                            title: Text(
+                              q5Options[index],
+                              style: GoogleFonts.inter(
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  p4q8(BuildContext context, String title) {
+    return Card(
+      elevation: 10,
+      child: Padding(
+        padding: AppConstants.all_5,
+        child: Column(
           children: [
             Align(
               alignment: Alignment.topLeft,
@@ -912,9 +987,9 @@ class _FormScreenState extends State<FormScreen> {
                     iconDisabledColor: Colors.black,
                     iconEnabledColor: Colors.black,
                     isExpanded: true,
-                    value: q6Answer.isEmpty ? q6Options.first : q6Answer,
+                    value: q7Answer.isEmpty ? q7Options.first : q7Answer,
                     items:
-                        q6Options.map<DropdownMenuItem<String>>((String value) {
+                        q7Options.map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Padding(
@@ -929,7 +1004,7 @@ class _FormScreenState extends State<FormScreen> {
                     }).toList(),
                     onChanged: (value) {
                       setState(() {
-                        q6Answer = value!;
+                        q7Answer = value!;
                       });
                     }),
               ),
@@ -1042,7 +1117,22 @@ class _FormScreenState extends State<FormScreen> {
 
   updateDetails() async {
     DateTime dt = DateTime.now();
-    LocationData ld = await getLocation();
+    String lat = '';
+    String longitude = '';
+    if (kIsWeb) {
+      LocationData ld = await getLocation();
+      setState(() {
+        lat = ld.latitude.toString();
+        longitude = ld.longitude.toString();
+      });
+    }
+    if (Platform.isAndroid || Platform.isIOS) {
+      Position pos = await determinePosition();
+      setState(() {
+        lat = pos.latitude.toString();
+        longitude = pos.longitude.toString();
+      });
+    }
 
     final databaseReference = FirebaseDatabase.instanceFor(
         app: await Firebase.initializeApp(
@@ -1057,13 +1147,15 @@ class _FormScreenState extends State<FormScreen> {
         "Name of the responder": name.text,
         "Do you know about the arrest of Chandra Babu Naidu?": q1Answer,
         "What do you think about the arrest of Chandra Babu Naidu?": q2Answer,
-        "What do you think is the motive behind his arrest?": q3Answer,
+        "Why do you think he was arrested?": q3Answer,
         "How did the Police behave during his arrest?": q4Answer,
-        "Why do you think the Police arrested CBN on Saturday?": q5Answer,
+        "What do you think about the alliance between JSP and TDP?": q5Answer,
+        "If BJP join with TDP-JSP alliance, will the alliance be stronger?":
+            q6Answer,
         "Phone Number of the Responder": number.text,
-        "Which Constituency do you belong to?": q6Answer,
-        "Longitude": ld.longitude,
-        "Latitude": ld.latitude,
+        "Which Constituency do you belong to?": q7Answer,
+        "Longitude": longitude,
+        "Latitude": lat,
         "vname": vName.text,
         "vMail": vMail.text
       };
@@ -1092,6 +1184,43 @@ class _FormScreenState extends State<FormScreen> {
 
   LocationData? _location;
   String? _error;
+
+  Future<Position> determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    return await Geolocator.getCurrentPosition();
+  }
 
   Future<LocationData> getLocation() async {
     Location location = Location();

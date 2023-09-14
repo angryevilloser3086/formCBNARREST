@@ -215,6 +215,9 @@ class _LoginScreenState extends State<LoginScreen>
                   } else if (!value.endsWith('@showtimeconsulting.in')) {
                     return 'Invalid email address';
                   }
+                  // else if (!value.endsWith('@SHOWTIMECONSULTING.IN')) {
+                  //   return 'Invalid email address';
+                  // }
                   return null;
                 },
                 onEditingComplete: () {
