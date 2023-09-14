@@ -250,6 +250,7 @@ class _FormScreenState extends State<FormScreen> {
   int selectedq6Radio = -1;
   String vNam = '';
   String vNum = '';
+  bool enableBTN = true;
 
   @override
   initState() {
@@ -265,7 +266,7 @@ class _FormScreenState extends State<FormScreen> {
       vMail = TextEditingController(text: vNum);
     });
 
-    print(vNam + vName.text);
+    //print(vNam + vName.text);
   }
 
   @override
@@ -316,13 +317,14 @@ class _FormScreenState extends State<FormScreen> {
                 p4q6(context,
                     "మీరు ఏ నియోజకవర్గానికి చెందినవారు?/Which Constituency do you belong to?"),
                 AppConstants.h_10,
-                InkWell(
-                  onTap: () {
-                    //if(name.text.isNotEmpty&& number.text.isNotEmpty&&q1Answer.isNotEmpty&&q2Answer.isNotEmpty)
-                    updateDetails();
-                  },
-                  child: btn(context, "Submit"),
-                )
+                if (enableBTN)
+                  InkWell(
+                    onTap: () {
+                      //if(name.text.isNotEmpty&& number.text.isNotEmpty&&q1Answer.isNotEmpty&&q2Answer.isNotEmpty)
+                      updateDetails();
+                    },
+                    child: btn(context, "Submit"),
+                  )
               ],
             ),
           ),
@@ -1075,7 +1077,13 @@ class _FormScreenState extends State<FormScreen> {
 
     databaseReference.ref("/cbn_arrest").child(s).set(answers).then((value) {
       AppConstants.showSnackBar(context, "Thanks for the Feedback");
-      AppConstants.moveNextClearAll(context, const FormScreen());
+      showAlert(context, "ధన్యవాదాలు/Thank You",
+          "మీ అభిప్రాయం విజయవంతంగా నమోదు చేయబడింది/Your opinion has been recorded successfully");
+      setState(() {
+        enableBTN = false;
+      });
+      Future.delayed(const Duration(seconds: 5),
+          () => AppConstants.moveNextClearAll(context, const FormScreen()));
     }).catchError((err) {
       AppConstants.showSnackBar(context, "$err");
     });
@@ -1101,5 +1109,33 @@ class _FormScreenState extends State<FormScreen> {
       });
     }
     return _location!;
+  }
+
+  showAlert(BuildContext context, String title, String msg) {
+    return showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            backgroundColor: AppConstants.appYellowBG,
+            title: Center(
+              child: Text(
+                title,
+                style: GoogleFonts.poppins(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700),
+              ),
+            ),
+            content: Text(
+              msg,
+              style: GoogleFonts.poppins(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+          );
+        });
   }
 }
