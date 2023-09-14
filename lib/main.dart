@@ -25,11 +25,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // if (USE_DATABASE_EMULATOR) {
-  //   //FirebaseDatabase.instance.useDatabaseEmulator(emulatorHost, emulatorPort);
-  //   FirebaseDatabase.instanceFor(app: await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // ),databaseURL: apiRequest.dbUrl);
-  // }
+  if (USE_DATABASE_EMULATOR) {
+    //FirebaseDatabase.instance.useDatabaseEmulator(emulatorHost, emulatorPort);
+    FirebaseDatabase.instanceFor(app: await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  ),databaseURL: apiRequest.dbUrl);
+  }
   runApp(const MyApp());
 }
