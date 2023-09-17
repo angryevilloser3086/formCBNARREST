@@ -41,7 +41,7 @@ class LoadingIndicator extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 4),
         child: Text(
           Strings.of(context).appTitle,
-          style: Theme.of(context).textTheme.headline1,
+          style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
           textAlign: TextAlign.center,
         ));
   }
@@ -49,8 +49,7 @@ class LoadingIndicator extends StatelessWidget {
   Text _getText(String displayedText) {
     return Text(
       displayedText,
-      style:
-          GoogleFonts.inter(fontSize: 14, color: AppConstants.appPrimaryColor),
+      style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
       textAlign: TextAlign.center,
     );
   }
@@ -71,7 +70,7 @@ class DialogBuilder {
             child: AlertDialog(
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(8.0))),
-              backgroundColor: Colors.white,
+              backgroundColor: AppConstants.appYellowBG,
               content: LoadingIndicator(text: msg),
             ));
       },
