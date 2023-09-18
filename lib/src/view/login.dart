@@ -70,14 +70,14 @@ class _LoginScreenState extends State<LoginScreen>
                   },
                   child: btn(context, "Next"),
                 ),
-                // InkWell(
-                //   onTap: () {
-                //     setState(() {
-                //       downloadData();
-                //     });
-                //   },
-                //   child: btnDownload(),
-                // ),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      downloadData();
+                    });
+                  },
+                  child: btnDownload(),
+                ),
               ],
             ),
           ),

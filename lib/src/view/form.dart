@@ -1210,11 +1210,17 @@ class _FormScreenState extends State<FormScreen> {
         "Please wait while we are submitting the details");
 
     if (kIsWeb) {
-      LocationData ld = await getLocation();
-      setState(() {
-        lat = ld.latitude.toString();
-        longitude = ld.longitude.toString();
+      getLocation().then((value) {
+        handleSuccess(value);
+      }).catchError((err) {
+        Navigator.of(context, rootNavigator: true).pop();
+        showAlert(context, "Error",
+            "Please allow the device's location through app info of the application to submit the form\n ఫారమ్‌ను సమర్పించడానికి దయచేసి మొబైల్ యొక్క లొకేషన్ అనుమతించండి ");
       });
+      // setState(() {
+      //   lat = ld.latitude.toString();
+      //   longitude = ld.longitude.toString();
+      // });
     }
     if (!kIsWeb) {
       if (Platform.isAndroid || Platform.isIOS) {
