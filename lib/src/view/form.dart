@@ -12,7 +12,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:location/location.dart';
 import '../firebase_options.dart';
 import '../network/api_request.dart';
-import '../utils/app_localization.dart';
 import '../utils/app_utils.dart';
 import '../utils/loading_indicator.dart';
 

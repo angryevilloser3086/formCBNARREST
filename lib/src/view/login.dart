@@ -228,20 +228,18 @@ class _LoginScreenState extends State<LoginScreen>
       val.add(row["Do you know about the arrest of Chandra Babu Naidu?"]
               .toString()
               .split("/")
-              .last ??
-          "");
+              .last);
       val.add(row["What do you think about the arrest of Chandra Babu Naidu?"]
               .toString()
               .split("/")
-              .last ??
-          "");
+              .last);
       val.add(
           row["Why do you think he was arrested?"].toString().split("/").last ??
               "");
       val.add(row["How did the Police behave during his arrest?"]
-              .toString()
-              .split("/")
-              .last);
+          .toString()
+          .split("/")
+          .last);
       val.add(row["Phone Number of the Responder"] ?? "");
       val.add(row["Which Constituency do you belong to?"]
               .toString()
