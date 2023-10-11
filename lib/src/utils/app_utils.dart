@@ -11,14 +11,12 @@ class AppConstants {
   static const appFontcolor = Color(0xFFCED3DC);
   static const appHeadcolor = Color(0xFFF2FF00);
   static const appYellowBG = Color(0xFFFEE806);
-  static const appredColor = Color(0xFFE10707);  
-  static const appredQColor = Color(0xFFE31F25);  
-  static const appPurpleColor = Color(0xFF641258);  
-  static const appPurplelit2Color = Color(0x60641258);  
-  static const appPurplelit1Color = Color(0x40641258);  
-
-  
-
+  static const appSTCColor = Color(0xFFE8F8FF);
+  static const appredColor = Color(0xFFE10707);
+  static const appredQColor = Color(0xFFE31F25);
+  static const appPurpleColor = Color(0xFF641258);
+  static const appPurplelit2Color = Color(0x60641258);
+  static const appPurplelit1Color = Color(0x40641258);
 
   static const h_5 = SizedBox(height: 5);
   static const h_10 = SizedBox(height: 10);
@@ -71,13 +69,14 @@ class AppConstants {
       topRight: Radius.circular(20),
     );
   }
+
   static var boxBorderDecoration = BoxDecoration(
       border: Border.all(color: Colors.amber), borderRadius: boxRadius8);
 
   static var boxBorderDecoration2 = BoxDecoration(
-    color: Colors.white,
-      border: Border.all(color:AppConstants.appBgLite), borderRadius: boxRadius8);
-
+      color: Colors.white,
+      border: Border.all(color: AppConstants.appBgLite),
+      borderRadius: boxRadius8);
 
   static InputDecoration toAppInputDecoration2(
       BuildContext context, String hint, String counterText) {
@@ -95,10 +94,11 @@ class AppConstants {
 
   static void showSnackBar(BuildContext context, String msg) {
     final snackBar = SnackBar(
-        content: Text(msg, style: GoogleFonts.inter(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white)),
+        content: Text(msg,
+            style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.white)),
         backgroundColor: appPrimaryColor,
         duration: const Duration(seconds: 2));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -130,6 +130,7 @@ class AppConstants {
           ),
         ));
   }
+
   static const boxDecoration = BoxDecoration(
       image: DecorationImage(
     image: AssetImage("assets/images/maha_bg.png"),

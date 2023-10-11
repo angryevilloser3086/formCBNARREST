@@ -5,13 +5,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../firebase_options.dart';
-import '../network/api_request.dart';
+import 'package:flutter_form/src/view/home/homescreen.dart';
+import 'package:provider/provider.dart';
+import '../../firebase_options.dart';
+import '../../network/api_request.dart';
+import '../../provider/login/login_provider.dart';
 import '/src/utils/shared_pref.dart';
-import '/src/view/form.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../utils/app_utils.dart';
+import '../../utils/app_utils.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -41,48 +43,68 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppConstants.appYellowBG,
-      body: SafeArea(
-          child: SingleChildScrollView(
-        child: Padding(
-          padding: AppConstants.all_10,
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                      "సీబీఎన్ అరెస్టుపై ప్రజాభిప్రాయం\nPublic Opinion on CBN Arrest",
-                      style: GoogleFonts.poppins(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w900)),
+    return ChangeNotifierProvider(
+      create: (context) => LoginProvider(),
+      child: WillPopScope(
+        onWillPop: () async => false,
+        child: Scaffold(
+          backgroundColor: AppConstants.appSTCColor,
+          body: SafeArea(
+              child: SingleChildScrollView(
+            child: Padding(
+              padding: AppConstants.all_10,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Center(
+                      child: Padding(
+                        padding: AppConstants.all_10,
+                        child: Image.asset("assets/images/STC_logo.png"),
+                      ),
+                    ),
+
+                    Consumer<LoginProvider>(builder: (_, provider, child) {
+                      return p3q2(context, provider, "Please Enter your Mail");
+                    }),
+                    Consumer<LoginProvider>(builder: (_, provider, child) {
+                      return p3q1(
+                          context, provider, "Please Enter the password");
+                    }),
+
+                    Consumer<LoginProvider>(builder: (_, provider, child) {
+                      return InkWell(
+                        onTap: () {
+                          provider.logInUser(context,
+                              email: provider.userID.text,
+                              password: provider.passWord.text);
+                        },
+                        child: btn(context, "Next"),
+                      );
+                    }),
+                    Consumer<LoginProvider>(builder: (_, provider, child) {
+                      return InkWell(
+                        onTap: () {
+                          provider.createUserLogins(_);
+                        },
+                        child: btn(context, "create"),
+                      );
+                    }),
+                    // InkWell(
+                    //   onTap: () {
+                    //     setState(() {
+                    //       downloadData();
+                    //     });
+                    //   },
+                    //   child: btnDownload(),
+                    // ),
+                  ],
                 ),
-                p3q1(context,
-                    "దయచేసి పేరును నమోదు చేయండి/Please Enter the Name"),
-                p3q2(context,
-                    "దయచేసి మీ మెయిల్‌ని నమోదు చేయండి/Please Enter your Mail"),
-                InkWell(
-                  onTap: () {
-                    saveDetails();
-                  },
-                  child: btn(context, "Next"),
-                ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      downloadData();
-                    });
-                  },
-                  child: btnDownload(),
-                ),
-              ],
+              ),
             ),
-          ),
+          )),
         ),
-      )),
+      ),
     );
   }
 
@@ -226,37 +248,33 @@ class _LoginScreenState extends State<LoginScreen>
       val.add(row["vMail"] ?? "");
       val.add(row["Name of the responder"] ?? "");
       val.add(row["Do you know about the arrest of Chandra Babu Naidu?"]
-              .toString()
-              .split("/")
-              .last);
+          .toString()
+          .split("/")
+          .last);
       val.add(row["What do you think about the arrest of Chandra Babu Naidu?"]
-              .toString()
-              .split("/")
-              .last);
+          .toString()
+          .split("/")
+          .last);
       val.add(
-          row["Why do you think he was arrested?"].toString().split("/").last ??
-              "");
+          row["Why do you think he was arrested?"].toString().split("/").last);
       val.add(row["How did the Police behave during his arrest?"]
           .toString()
           .split("/")
           .last);
       val.add(row["Phone Number of the Responder"] ?? "");
       val.add(row["Which Constituency do you belong to?"]
-              .toString()
-              .split("/")
-              .first ??
-          "");
+          .toString()
+          .split("/")
+          .first);
       val.add(row["What do you think about the alliance between JSP and TDP?"]
-              .toString()
-              .split("/")
-              .last ??
-          "");
+          .toString()
+          .split("/")
+          .last);
       val.add(
           row["If BJP join with TDP-JSP alliance, will the alliance be stronger?"]
-                  .toString()
-                  .split("/")
-                  .last ??
-              "");
+              .toString()
+              .split("/")
+              .last);
 
       val.add(row["Latitude"].toString());
       val.add(row["Longitude"].toString());
@@ -284,7 +302,7 @@ class _LoginScreenState extends State<LoginScreen>
         sharedPref.save("name", name.text);
         sharedPref.save("mail", number.text);
       });
-      AppConstants.moveNextClearAll(context, const FormScreen());
+      AppConstants.moveNextClearAll(context, const HomeScreen());
     } else {
       AppConstants.showSnackBar(context, "Please enter all details");
     }
@@ -315,7 +333,7 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  p3q1(BuildContext context, String title) {
+  p3q1(BuildContext context, LoginProvider provider, String title) {
     return Card(
       elevation: 10,
       child: Padding(
@@ -335,13 +353,13 @@ class _LoginScreenState extends State<LoginScreen>
               height: 75,
               width: MediaQuery.of(context).size.width,
               child: TextFormField(
-                controller: name,
+                controller: provider.passWord,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 textCapitalization: TextCapitalization.sentences,
                 autofocus: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter the Answer';
+                    return 'Please enter the password';
                   }
                   return null;
                 },
@@ -350,6 +368,8 @@ class _LoginScreenState extends State<LoginScreen>
                   //addNewPeople.formKey.currentState!.validate();
                 },
                 textAlign: TextAlign.justify,
+                obscureText: true,
+                obscuringCharacter: "*",
                 style: GoogleFonts.inter(
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
@@ -392,7 +412,7 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  p3q2(BuildContext context, String title) {
+  p3q2(BuildContext context, LoginProvider provider, String title) {
     return Card(
       elevation: 10,
       child: Padding(
@@ -412,14 +432,14 @@ class _LoginScreenState extends State<LoginScreen>
               height: 75,
               width: MediaQuery.of(context).size.width,
               child: TextFormField(
-                controller: number,
+                controller: provider.userID,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 textCapitalization: TextCapitalization.sentences,
                 autofocus: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter an email address';
-                  } else if (!value.endsWith('@showtimeconsulting.in')) {
+                  } else if (!provider.isValidEmail(value)) {
                     return 'Invalid email address';
                   }
                   // else if (!value.endsWith('@SHOWTIMECONSULTING.IN')) {

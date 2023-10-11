@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form/src/view/home/homescreen.dart';
 
-import '../utils/app_utils.dart';
-import '../utils/shared_pref.dart';
-import 'form.dart';
+import '../../utils/app_utils.dart';
+import '../../utils/shared_pref.dart';
 import 'login.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if (value.toString().isNotEmpty) {
         setState(() {
           showLoader = false;
-          AppConstants.moveNextClearAll(context, const FormScreen());
+          AppConstants.moveNextClearAll(context, const HomeScreen());
         });
       } else {
         setState(() {
@@ -36,34 +36,41 @@ class _SplashScreenState extends State<SplashScreen> {
           AppConstants.moveNextstl(context, const LoginScreen());
         });
       }
-    }).catchError((err){
+    }).catchError((err) {
       setState(() {
-          showLoader = false;
-          AppConstants.moveNextstl(context, const LoginScreen());
-        });
+        showLoader = false;
+        AppConstants.moveNextstl(context, const LoginScreen());
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppConstants.appYellowBG,
+      backgroundColor: AppConstants.appSTCColor,
       body: SafeArea(
           child: Column(
         children: [
           AppConstants.h_40,
-          // Padding(
-          //   padding: AppConstants.all_10,
-          //   child: Image.asset("assets/images/ic_new_logo.png"),
-          // ),
+          const Spacer(
+            flex: 2,
+          ),
+          Padding(
+            padding: AppConstants.all_10,
+            child: Image.asset("assets/images/STC_logo.png"),
+          ),
+          const Spacer(
+            flex: 3,
+          ),
           AppConstants.h_20,
           if (showLoader)
             const Align(
               alignment: Alignment.bottomCenter,
               child: CircularProgressIndicator(
-                color: AppConstants.appredColor,
+                color: Colors.black,
               ),
-            )
+            ),
+          AppConstants.h_20,
         ],
       )),
     );

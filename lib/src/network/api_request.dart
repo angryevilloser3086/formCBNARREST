@@ -5,7 +5,10 @@ import 'package:http/http.dart';
 class ApiRequest {
   Client client = Client();
   String dbUrl = "https://cbnform.firebaseio.com/";
-  String dbUrl2 = "https://cbn-survey-default-rtdb.asia-southeast1.firebasedatabase.app/";
+  String dbUrl2 =
+      "https://cbn-survey-default-rtdb.asia-southeast1.firebasedatabase.app/";
+  String dbUrlBranding =
+      "https://branding-posters.asia-southeast1.firebasedatabase.app/";
 
   Future<bool> uploadRTDB(Map<String, dynamic> json) async {
     try {

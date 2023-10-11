@@ -7,13 +7,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-import '../../src/utils/shared_pref.dart';
+import '../../utils/app_localization.dart';
+import '../../utils/shared_pref.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:location/location.dart';
-import '../firebase_options.dart';
-import '../network/api_request.dart';
-import '../utils/app_utils.dart';
-import '../utils/loading_indicator.dart';
+import '../../firebase_options.dart';
+import '../../network/api_request.dart';
+import '../../utils/app_utils.dart';
+import '../../utils/loading_indicator.dart';
+import '../home/homescreen.dart';
 
 class FormScreen extends StatefulWidget {
   const FormScreen({super.key});
@@ -287,92 +289,111 @@ class _FormScreenState extends State<FormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
-      child: Scaffold(
-        resizeToAvoidBottomInset: true,
-        appBar: AppBar(
-          backgroundColor: Colors.yellowAccent,
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          title: Text(
-              "సీబీఎన్ అరెస్టుపై ప్రజాభిప్రాయం\nPublic Opinion on CBN Arrest",
-              style: GoogleFonts.poppins(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700)),
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+        backgroundColor: AppConstants.appSTCColor,
+        iconTheme: const IconThemeData(color: Colors.black),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        leading: InkWell(
+          onTap: () =>
+              AppConstants.moveNextClearAll(context, const HomeScreen()),
+          child: const Icon(
+            Icons.arrow_back_ios,
+            color: Colors.black,
+          ),
         ),
-        backgroundColor: Colors.yellowAccent,
-        body: SafeArea(
-            child: SingleChildScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
-          child: Padding(
-            padding: AppConstants.all_20,
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  p3VNAME(context, "వాలంటీర్ పేరు/Name of the Volunteer"),
-                  p3VMail(
-                      context, "వాలంటీర్ యొక్క మెయిల్/Mail of the Volunteer"),
-                  p3q6(context, "ప్రతిస్పందనదారు పేరు/Name of the responder"),
-                  p4q1(context,
-                      "1. చంద్రబాబు నాయుడు అరెస్టు గురించి మీకు తెలుసా?/Do you know about the arrest of Chandra Babu Naidu?"),
-                  p4q2(
-                    context,
-                    "2. చంద్రబాబు నాయుడు అరెస్టుపై మీరేమంటారు?/What do you think about the arrest of Chandra Babu Naidu?",
-                  ),
-                  p4q3(
-                    context,
-                    "3.చంద్రబాబు నాయుడు ఎందుకు అరెస్ట్ అయ్యారని అనుకుంటున్నారు?/Why do you think he was arrested?",
-                  ),
-                  p4q4(
-                    context,
-                    "4. అరెస్టు సమయంలో పోలీసులు ఎలా ప్రవర్తించారు?/How did the Police behave during his arrest?",
-                  ),
-                  p4q5(
-                    context,
-                    "5. టీడీపీ-జేఎస్పీ మధ్య పొత్తు గురించి మీరు ఏమనుకుంటున్నారు?/ What do you think about the alliance between JSP and TDP?",
-                  ),
-                  p4q6(context,
-                      "6.టీడీపీ-జేఎస్పీ కూటమితో బీజేపీ కలిస్తే పొత్తు బలపడుతుందా?/If BJP join with TDP- JSP alliance, will the alliance be stronger?"),
-
-                  p4q7(context,
-                      "ప్రతిస్పందించే వ్యక్తి యొక్క ఫోన్ నెంబరు/Phone Number of the Responder"),
-                  p4q8(context,
-                      "మీరు ఏ నియోజకవర్గానికి చెందినవారు?/Which Constituency do you belong to?"),
-
-                  AppConstants.h_30,
-                  if (enableBTN)
-                    InkWell(
-                      onTap: () {
-                        if ((name.text.isNotEmpty &&
-                                q3Answer.isNotEmpty &&
-                                q5Answer.isNotEmpty &&
-                                q4Answer.isNotEmpty &&
-                                q6Answer.isNotEmpty &&
-                                q1Answer.isNotEmpty &&
-                                q2Answer.isNotEmpty &&
-                                q7Answer.isNotEmpty) &&
-                            (number.text.length == 10 || number.text.isEmpty)) {
-                          updateDetails();
-                        } else {
-                          AppConstants.showSnackBar(
-                              context, "Please enter all the details");
-                        }
-                      },
-                      child: btn(context, "Submit"),
+        title: Text(
+            "సీబీఎన్ అరెస్టుపై ప్రజాభిప్రాయం\nPublic Opinion on CBN Arrest",
+            style: GoogleFonts.poppins(
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.w700)),
+      ),
+      backgroundColor: AppConstants.appSTCColor,
+      body: SafeArea(
+          child: Stack(
+        children: [
+          Positioned(
+              child: Container(
+            height: MediaQuery.of(context).size.height,
+            child: Center(
+              child: Image.asset(
+                "assets/images/STC_logo.png",
+                opacity: const AlwaysStoppedAnimation(.5),
+              ),
+            ),
+          )),
+          SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+            child: Padding(
+              padding: AppConstants.all_20,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    p3VNAME(context, "వాలంటీర్ పేరు/Name of the Volunteer"),
+                    p3VMail(
+                        context, "వాలంటీర్ యొక్క మెయిల్/Mail of the Volunteer"),
+                    p3q6(context, "ప్రతిస్పందనదారు పేరు/Name of the responder"),
+                    p4q1(context,
+                        "1. చంద్రబాబు నాయుడు అరెస్టు గురించి మీకు తెలుసా?/Do you know about the arrest of Chandra Babu Naidu?"),
+                    p4q2(
+                      context,
+                      "2. చంద్రబాబు నాయుడు అరెస్టుపై మీరేమంటారు?/What do you think about the arrest of Chandra Babu Naidu?",
                     ),
-                  AppConstants.h_30
-                  //p4q8Exp()
-                ],
+                    p4q3(
+                      context,
+                      "3.చంద్రబాబు నాయుడు ఎందుకు అరెస్ట్ అయ్యారని అనుకుంటున్నారు?/Why do you think he was arrested?",
+                    ),
+                    p4q4(
+                      context,
+                      "4. అరెస్టు సమయంలో పోలీసులు ఎలా ప్రవర్తించారు?/How did the Police behave during his arrest?",
+                    ),
+                    p4q5(
+                      context,
+                      "5. టీడీపీ-జేఎస్పీ మధ్య పొత్తు గురించి మీరు ఏమనుకుంటున్నారు?/ What do you think about the alliance between JSP and TDP?",
+                    ),
+                    p4q6(context,
+                        "6.టీడీపీ-జేఎస్పీ కూటమితో బీజేపీ కలిస్తే పొత్తు బలపడుతుందా?/If BJP join with TDP- JSP alliance, will the alliance be stronger?"),
+
+                    p4q7(context,
+                        "ప్రతిస్పందించే వ్యక్తి యొక్క ఫోన్ నెంబరు/Phone Number of the Responder"),
+                    p4q8(context,
+                        "మీరు ఏ నియోజకవర్గానికి చెందినవారు?/Which Constituency do you belong to?"),
+
+                    AppConstants.h_30,
+                    if (enableBTN)
+                      InkWell(
+                        onTap: () {
+                          if ((name.text.isNotEmpty &&
+                                  q3Answer.isNotEmpty &&
+                                  q5Answer.isNotEmpty &&
+                                  q4Answer.isNotEmpty &&
+                                  q6Answer.isNotEmpty &&
+                                  q1Answer.isNotEmpty &&
+                                  q2Answer.isNotEmpty &&
+                                  q7Answer.isNotEmpty) &&
+                              (number.text.length == 10 ||
+                                  number.text.isEmpty)) {
+                            updateDetails();
+                          } else {
+                            AppConstants.showSnackBar(
+                                context, "Please enter all the details");
+                          }
+                        },
+                        child: btn(context, "Submit"),
+                      ),
+                    AppConstants.h_30
+                    //p4q8Exp()
+                  ],
+                ),
               ),
             ),
           ),
-        )),
-      ),
+        ],
+      )),
     );
   }
 
@@ -994,17 +1015,6 @@ class _FormScreenState extends State<FormScreen> {
     );
   }
 
-  final List<String> items = [
-    'A_Item1',
-    'A_Item2',
-    'A_Item3',
-    'A_Item4',
-    'B_Item1',
-    'B_Item2',
-    'B_Item3',
-    'B_Item4',
-  ];
-
   // String? selectedValue;
   // final TextEditingController textEditingController = TextEditingController();
 
@@ -1206,7 +1216,8 @@ class _FormScreenState extends State<FormScreen> {
   String longitude = '';
   updateDetails() async {
     DialogBuilder(context).showLoadingIndicator(
-        "Please wait while we are submitting the details");
+        "Please wait while we are submitting the details",
+        Strings.of(context).appTitle);
 
     if (kIsWeb) {
       getLocation().then((value) {
@@ -1294,7 +1305,6 @@ class _FormScreenState extends State<FormScreen> {
   }
 
   LocationData? _location;
-  String? _error;
 
   Future<Position> determinePosition() async {
     bool serviceEnabled;
@@ -1371,7 +1381,6 @@ class _FormScreenState extends State<FormScreen> {
   Future<LocationData> getLocation() async {
     Location location = Location();
     setState(() {
-      _error = null;
     });
     try {
       final locationResult = await location.getLocation();
@@ -1380,7 +1389,6 @@ class _FormScreenState extends State<FormScreen> {
       });
     } on PlatformException catch (err) {
       setState(() {
-        _error = err.code;
       });
     }
     return _location!;
