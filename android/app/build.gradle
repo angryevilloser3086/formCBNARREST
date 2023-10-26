@@ -27,7 +27,7 @@ apply plugin: 'com.google.gms.google-services'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    namespace "com.example.flutter_form"
+     namespace "com.example.flutter_form"
     compileSdkVersion 34
 
     ndkVersion flutter.ndkVersion
@@ -72,6 +72,7 @@ flutter {
 dependencies {
     //noinspection GradleDependency
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
     implementation platform('com.google.firebase:firebase-bom:32.2.3')
     implementation 'com.google.firebase:firebase-analytics-ktx:21.3.0'

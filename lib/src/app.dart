@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form/src/provider/home/home_provider.dart';
 import 'package:flutter_form/src/view/login/splash.dart';
 import 'package:provider/provider.dart';
+import 'provider/booking/booking_provider.dart';
+import 'provider/booking/journey_provider.dart';
 import 'view/login/login.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -22,12 +24,15 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => HomeProvider()),
+        ChangeNotifierProvider(create: (_) => BookingProvider()),
+        ChangeNotifierProvider(create: (_) => JourneyProvider()),
       ],
       child: MaterialApp(
         // Providing a restorationScopeId allows the Navigator built by the
         // MaterialApp to restore the navigation stack when a user leaves and
         // returns to the app after it has been killed while running in the
         // background.
+
         restorationScopeId: 'app',
         debugShowCheckedModeBanner: false,
         // Provide the generated AppLocalizations to the MaterialApp. This
@@ -55,6 +60,7 @@ class MyApp extends StatelessWidget {
         // preferred ThemeMode (light, dark, or system default) from the
         // SettingsController to display the correct theme.
         theme: ThemeData(
+          
             listTileTheme: ListTileThemeData(iconColor: Colors.black)),
         darkTheme: ThemeData.dark(),
         themeMode: ThemeMode.light,

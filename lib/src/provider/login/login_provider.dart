@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_form/src/view/home/homescreen.dart';
 import '../../model/emp_model.dart';
 import '../../utils/app_utils.dart';
+import '../../utils/loading_indicator.dart';
 import '../../utils/shared_pref.dart';
 
 class LoginProvider extends ChangeNotifier {
@@ -22,20 +22,39 @@ class LoginProvider extends ChangeNotifier {
     required String password,
   }) async {
     isLoader = true;
+    DialogBuilder(context).showLoadingIndicator(
+        'Please wait while we are fetching your details', '');
 
-    try {
-      if (email.isNotEmpty || password.isNotEmpty) {
-        await _auth.signInWithEmailAndPassword(
-            email: email, password: password);
+    if (email.isNotEmpty || password.isNotEmpty) {
+      _auth
+          .signInWithEmailAndPassword(email: email, password: password)
+          .then((value) async {
+        Navigator.of(context, rootNavigator: true).pop();
+        Employee? emp;
         await sharedPref.saveBool("isLoggedIn", true);
         await sharedPref.save("mail", email);
-        AppConstants.showSnackBar(context, "Succesfully LoggedIn");
-        AppConstants.moveNextClearAll(context, const HomeScreen());
-        notifyListeners();
-      }
-    } catch (err) {
-      isLoader = false;
-      AppConstants.showSnackBar(context, "Login failed due to$err");
+
+        await sharedPref.save("token", await _auth.currentUser!.getIdToken());
+        _db
+            .collection('employees')
+            .where('ofc_mail', isEqualTo: email)
+            .get()
+            .then((value) {
+          for (QueryDocumentSnapshot dd in value.docs) {
+            //log(jsonEncode(dd.data()));
+            emp = Employee.fromJson(jsonDecode(jsonEncode(dd.data())));
+            notifyListeners();
+          }
+
+          AppConstants.showSnackBar(context, "Succesfully LoggedIn");
+          AppConstants.moveNextClearAll(context, const HomeScreen());
+        });
+       
+      }).catchError((err) {
+        Navigator.of(context, rootNavigator: true).pop();
+        AppConstants.showSnackBar(context, "Login failed due to$err");
+      });
+
       notifyListeners();
     }
   }

@@ -5,26 +5,28 @@ class Employee {
   String? name;
   int? sNo;
   String? dept;
+  String level;
   String? designation;
 
   Employee(
-      {this.number,
-      this.ofcMail,
-      this.empID,
-      this.name,
+      {required this.number,
+      required this.ofcMail,
+      required this.empID,
+      required this.name,
       this.sNo,
-      this.dept,
-      this.designation});
+      required this.dept,
+      required this.designation,
+      required this.level});
 
   factory Employee.fromJson(Map<String, dynamic> json) => Employee(
-        number: json['number'],
-        ofcMail: json['ofc_mail'],
-        empID: json['empID'],
-        name: json['name'],
-        sNo: json['S.No'],
-        dept: json['dept'],
-        designation: json['designation'],
-      );
+      number: json['number'],
+      ofcMail: json['ofc_mail'],
+      empID: json['empID'],
+      name: json['name'],
+      sNo: json['S . No'],
+      dept: json['dept'],
+      designation: json['designation'],
+      level: json['level']);
 
   Map<String, dynamic> toJson() => {
         'number': number,
@@ -34,5 +36,6 @@ class Employee {
         'S.No': sNo,
         'dept': dept,
         'designation': designation,
+        'level': level
       };
 }

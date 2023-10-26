@@ -38,7 +38,7 @@ class BookingForm extends StatelessWidget {
           child: Stack(
             children: [
               Positioned(
-                  child: Container(
+                  child: SizedBox(
                 height: MediaQuery.of(context).size.height,
                 child: Center(
                   child: Image.asset(
@@ -48,58 +48,236 @@ class BookingForm extends StatelessWidget {
                 ),
               )),
               SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Consumer<BookingProvider>(builder: (_, provider, child) {
-                      return typeOfReq(context, provider);
-                    }),
-                    Selector<BookingProvider, String>(
-                        builder: (context, val, child) {
-                          if (val == "Cab Request") {
-                            return Consumer<BookingProvider>(
-                                builder: (_, provider, child) {
-                              return typeOfCabReq(context, provider);
-                            });
-                          } else if (val == "Accomodation") {
-                            return Consumer<BookingProvider>(
-                                builder: (_, provider, child) {
-                              return Container(
-                                color: Colors.amber,
-                              );
-                            });
-                          } else {
-                            return Container();
-                          }
-                        },
-                        selector: (p0, p1) => p1.sTypeReq),
-                    Selector<BookingProvider, String>(
-                        builder: (context, val, child) {
-                          if (val == "On-Call") {
-                            return cabRequest(context);
-                          } else if (val == 'Extra Cab') {
-                            return Consumer<BookingProvider>(
-                                builder: (_, provider, child) {
-                              return extraCabBooking(context);
-                            });
-                          } else if (val == 'Monthly') {
-                            return Consumer<BookingProvider>(
-                                builder: (_, provider, child) {
-                              return Container(
-                                height: 200,
-                                color: Colors.amber,
-                              );
-                            });
-                          } else {
-                            return Container();
-                          }
-                        },
-                        selector: (p0, p1) => p1.sCabType),
-                  ],
-                ),
+                child: Consumer<BookingProvider>(
+                    builder: (context, provider, child) {
+                  return Form(
+                    key: provider.formKey,
+                    child: Column(
+                      children: [
+                        Consumer<BookingProvider>(
+                            builder: (_, provider, child) {
+                          return typeOfReq(context, provider);
+                        }),
+                        Selector<BookingProvider, String>(
+                            builder: (context, val, child) {
+                              if (val == "Cab Request") {
+                                return Consumer<BookingProvider>(
+                                    builder: (_, provider, child) {
+                                  return typeOfCabReq(context, provider);
+                                });
+                              } else if (val == "Accomodation") {
+                                return accomodation(context);
+                              } else if (val == 'Travel') {
+                                return travel(context);
+                              } else {
+                                return Container();
+                              }
+                            },
+                            selector: (p0, p1) => p1.sTypeReq),
+                        Selector<BookingProvider, String>(
+                            builder: (context, val, child) {
+                              if (val == "On-Call") {
+                                return cabRequest(context);
+                              } else if (val == 'Extra Cab') {
+                                return Consumer<BookingProvider>(
+                                    builder: (_, provider, child) {
+                                  return extraCabBooking(context);
+                                });
+                              } else if (val == 'Monthly') {
+                                return Consumer<BookingProvider>(
+                                    builder: (_, provider, child) {
+                                  return cabRequest(context);
+                                });
+                              } else {
+                                return Container();
+                              }
+                            },
+                            selector: (p0, p1) => p1.sCabType),
+                        Selector<BookingProvider, bool>(
+                            builder: (_, formKey, child) {
+                              if (formKey) {
+                                return Consumer<BookingProvider>(
+                                    builder: (_, provider, child) {
+                                  return InkWell(
+                                    onTap: () => provider.setSubmitBtn(context),
+                                    child: btn(context, "Raise a request"),
+                                  );
+                                });
+                              } else {
+                                return Container();
+                              }
+                            },
+                            selector: ((p0, p1) => p1.setSubmit)),
+                        AppConstants.h_20,
+                      ],
+                    ),
+                  );
+                }),
               )
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  accomodation(BuildContext context) {
+    return Column(
+      children: [
+        AppConstants.h_10,
+        Consumer<BookingProvider>(builder: (_, provider, child) {
+          return personName(context, provider);
+        }),
+        AppConstants.h_10,
+        Consumer<BookingProvider>(builder: (_, provider, child) {
+          return mobileNum(context, provider);
+        }),
+        AppConstants.h_10,
+        Consumer<BookingProvider>(builder: (_, provider, child) {
+          return empCode(context, provider);
+        }),
+        AppConstants.h_10,
+        Consumer<BookingProvider>(builder: (_, provider, child) {
+          return city(context, provider);
+        }),
+        AppConstants.h_10,
+        Consumer<BookingProvider>(builder: (_, provider, child) {
+          return state(context, provider);
+        }),
+        AppConstants.h_10,
+        Consumer<BookingProvider>(builder: (_, provider, child) {
+          return purposeOFVisit(context, provider);
+        }),
+        AppConstants.h_10,
+        Consumer<BookingProvider>(builder: (_, provider, child) {
+          if (provider.cabRDate.isEmpty) {
+            provider.initDate(false);
+          }
+          return selectDate(_, provider, "Check In Date:", false);
+        }),
+        AppConstants.h_10,
+        Consumer<BookingProvider>(builder: (_, provider, child) {
+          return selectTime(context, provider, "Check In Time:", false);
+        }),
+        AppConstants.h_10,
+        Consumer<BookingProvider>(builder: (_, provider, child) {
+          if (provider.checkoutDate.isEmpty) {
+            provider.initDate(true);
+          }
+          return selectDate(_, provider, "Check Out Date:", true);
+        }),
+        AppConstants.h_10,
+        Consumer<BookingProvider>(builder: (_, provider, child) {
+          return selectTime(context, provider, "Check Out Time:", true);
+        }),
+        AppConstants.h_10,
+        Consumer<BookingProvider>(builder: (_, provider, child) {
+          return movementType(context, provider);
+        }),
+        Consumer<BookingProvider>(builder: (_, provider, child) {
+          return approvedBY(context, provider);
+        }),
+      ],
+    );
+  }
+
+  travel(BuildContext context) {
+    return Padding(
+      padding: AppConstants.all_10,
+      child: Column(
+        children: [
+          Consumer<BookingProvider>(builder: (_, provider, child) {
+            return personName(context, provider);
+          }),
+          AppConstants.h_10,
+          Consumer<BookingProvider>(builder: (_, provider, child) {
+            return mobileNum(context, provider);
+          }),
+          AppConstants.h_10,
+          Consumer<BookingProvider>(builder: (_, provider, child) {
+            return age(context, provider);
+          }),
+          AppConstants.h_10,
+          Consumer<BookingProvider>(builder: (_, provider, child) {
+            return empCode(context, provider);
+          }),
+          Consumer<BookingProvider>(builder: (_, provider, child) {
+            if (provider.cabRDate.isEmpty) {
+              provider.initDate(false);
+            }
+            return selectDate(_, provider, "Travelling Date:", false);
+          }),
+          Consumer<BookingProvider>(builder: (_, provider, child) {
+            return modeOfTravel(context, provider);
+          }),
+          Consumer<BookingProvider>(builder: (_, provider, child) {
+            return locationFrom(context, provider);
+          }),
+          Consumer<BookingProvider>(builder: (_, provider, child) {
+            return destinationLoc(context, provider);
+          }),
+          Consumer<BookingProvider>(builder: (_, provider, child) {
+            return pickUp(context, provider);
+          }),
+          Consumer<BookingProvider>(builder: (_, provider, child) {
+            return droppingPoint(context, provider);
+          }),
+          Consumer<BookingProvider>(builder: (_, provider, child) {
+            return selectTime(context, provider, "Preferred Timing:", false);
+          }),
+          Consumer<BookingProvider>(builder: (_, provider, child) {
+            return approvedBY(context, provider);
+          }),
+        ],
+      ),
+    );
+  }
+
+  modeOfTravel(BuildContext context, BookingProvider provider) {
+    return Padding(
+      padding: AppConstants.all_10,
+      child: Row(
+        children: [
+          Text("Mode of Travel:",
+              style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black)),
+          AppConstants.w_20,
+          Padding(
+            padding: AppConstants.all_5,
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.4,
+              decoration: AppConstants.boxBorderDecoration2,
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton(
+                    dropdownColor: Colors.white,
+                    borderRadius: AppConstants.boxRadius8,
+                    iconDisabledColor: Colors.black,
+                    iconEnabledColor: Colors.black,
+                    isExpanded: true,
+                    value: provider.sMoT.isEmpty
+                        ? provider.modeOfTravel.first
+                        : provider.sMoT,
+                    items: provider.modeOfTravel
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Padding(
+                          padding: AppConstants.all_5,
+                          child: Text(value,
+                              style: GoogleFonts.inter(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black)),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) => provider.setMOT(value.toString())),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -209,9 +387,9 @@ class BookingForm extends StatelessWidget {
         AppConstants.h_10,
         Consumer<BookingProvider>(builder: (_, provider, child) {
           if (provider.cabRDate.isEmpty) {
-            provider.initDate();
+            provider.initDate(false);
           }
-          return selectDate(_, provider);
+          return selectDate(_, provider, "Request Date:", false);
         }),
         AppConstants.h_10,
         Consumer<BookingProvider>(builder: (_, provider, child) {
@@ -222,10 +400,13 @@ class BookingForm extends StatelessWidget {
           return personName(context, provider);
         }),
         Consumer<BookingProvider>(builder: (_, provider, child) {
+          return empCode(context, provider);
+        }),
+        Consumer<BookingProvider>(builder: (_, provider, child) {
           return mobileNum(context, provider);
         }),
         Consumer<BookingProvider>(builder: (_, provider, child) {
-          return selectTime(context, provider);
+          return selectTime(context, provider, "Pick-up Time:", false);
         }),
         Consumer<BookingProvider>(builder: (_, provider, child) {
           return pickUp(context, provider);
@@ -266,10 +447,13 @@ class BookingForm extends StatelessWidget {
             return personName(context, provider);
           }),
           Consumer<BookingProvider>(builder: (_, provider, child) {
+            return empCode(context, provider);
+          }),
+          Consumer<BookingProvider>(builder: (_, provider, child) {
             return mobileNum(context, provider);
           }),
           Consumer<BookingProvider>(builder: (_, provider, child) {
-            return selectTime(context, provider);
+            return selectTime(context, provider, "Pick-up Time:", false);
           }),
           Consumer<BookingProvider>(builder: (_, provider, child) {
             return pickUp(context, provider);
@@ -278,10 +462,10 @@ class BookingForm extends StatelessWidget {
             return whomToMeet(context, provider);
           }),
           Consumer<BookingProvider>(builder: (_, provider, child) {
-            return approvedBY(context, provider);
+            return destinationLoc(context, provider);
           }),
           Consumer<BookingProvider>(builder: (_, provider, child) {
-            return destinationLoc(context, provider);
+            return approvedBY(context, provider);
           }),
         ],
       ),
@@ -397,31 +581,20 @@ class BookingForm extends StatelessWidget {
     );
   }
 
-  ///Extra Cab request date -
-// Team -
-// Zone -
-// PC -
-// Name of employee -
-// Employee mobile number:
-// Pick up point -
-// Whom to meet -
-// Purpose of trip -
-// Estimated travel km -
-// Approved by -
-
-  selectDate(BuildContext context, BookingProvider provider) {
+  selectDate(BuildContext context, BookingProvider provider, String title,
+      bool checkoutD) {
     return Padding(
       padding: AppConstants.all_10,
       child: Row(
         children: [
-          Text("Request Date:",
+          Text(title,
               style: GoogleFonts.poppins(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
                   color: Colors.black)),
           AppConstants.w_20,
           InkWell(
-            onTap: () => provider.showDate(context),
+            onTap: () => provider.showDate(context, checkoutD),
             child: Container(
               height: 50,
               width: MediaQuery.of(context).size.width * 0.45,
@@ -436,7 +609,7 @@ class BookingForm extends StatelessWidget {
                     color: Colors.black,
                   ),
                   AppConstants.w_20,
-                  Text(provider.cabRDate,
+                  Text(checkoutD ? provider.checkoutDate : provider.cabRDate,
                       style: GoogleFonts.poppins(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
@@ -650,6 +823,7 @@ class BookingForm extends StatelessWidget {
                       borderSide: BorderSide(color: Colors.black),
                       borderRadius: AppConstants.boxRadius8)),
               keyboardType: TextInputType.phone,
+              maxLength: 10,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
           )
@@ -658,19 +832,89 @@ class BookingForm extends StatelessWidget {
     );
   }
 
-  selectTime(BuildContext context, BookingProvider provider) {
+  age(BuildContext context, BookingProvider provider) {
     return Padding(
       padding: AppConstants.all_10,
       child: Row(
         children: [
-          Text("Pick-up Time:",
+          Text("Age:",
+              style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black)),
+          AppConstants.w_30,
+          AppConstants.w_40,
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.45,
+            height: 50,
+            child: TextFormField(
+              controller: provider.age,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              textCapitalization: TextCapitalization.characters,
+              autofocus: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter the Answer';
+                }
+                return null;
+              },
+              onEditingComplete: () {
+                FocusScope.of(context).nextFocus();
+                //addNewPeople.formKey.currentState!.validate();
+              },
+              textAlign: TextAlign.justify,
+              style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black),
+              decoration: InputDecoration(
+                  // contentPadding: AppConstants.all_5,
+                  fillColor: Colors.white,
+                  filled: true,
+                  counterStyle: Theme.of(context).textTheme.bodySmall,
+                  counterText: "",
+                  hintText: "Enter Age",
+                  errorStyle: GoogleFonts.inter(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.red),
+                  hintStyle: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w200,
+                      color: Colors.black),
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8),
+                  focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8),
+                  border: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8)),
+              keyboardType: TextInputType.phone,
+              maxLength: 3,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  selectTime(BuildContext context, BookingProvider provider, String title,
+      bool checkout) {
+    return Padding(
+      padding: AppConstants.all_10,
+      child: Row(
+        children: [
+          Text(title,
               style: GoogleFonts.poppins(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
                   color: Colors.black)),
           AppConstants.w_20,
           InkWell(
-            onTap: () => provider.selectTimer(context),
+            onTap: () => provider.selectTimer(context, checkout),
             child: Container(
               height: 50,
               width: MediaQuery.of(context).size.width * 0.45,
@@ -685,7 +929,7 @@ class BookingForm extends StatelessWidget {
                     color: Colors.black,
                   ),
                   AppConstants.w_20,
-                  Text(provider.time,
+                  Text(checkout ? provider.checkOutTime : provider.time,
                       style: GoogleFonts.poppins(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
@@ -921,7 +1165,7 @@ class BookingForm extends StatelessWidget {
             width: MediaQuery.of(context).size.width * 0.45,
             height: 50,
             child: TextFormField(
-              controller: provider.destination,
+              controller: provider.approxKM,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               textCapitalization: TextCapitalization.characters,
               autofocus: true,
@@ -1014,7 +1258,7 @@ class BookingForm extends StatelessWidget {
                   filled: true,
                   counterStyle: Theme.of(context).textTheme.bodySmall,
                   counterText: "",
-                  hintText: "Enter Purpose of Trip",
+                  hintText: "Enter Details",
                   errorStyle: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w400,
@@ -1058,7 +1302,7 @@ class BookingForm extends StatelessWidget {
             width: MediaQuery.of(context).size.width * 0.45,
             height: 50,
             child: TextFormField(
-              controller: provider.whomTOMeet,
+              controller: provider.approvedBY,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               textCapitalization: TextCapitalization.characters,
               autofocus: true,
@@ -1083,7 +1327,7 @@ class BookingForm extends StatelessWidget {
                   filled: true,
                   counterStyle: Theme.of(context).textTheme.bodySmall,
                   counterText: "",
-                  hintText: "Enter Purpose of Trip",
+                  hintText: "Enter the Name of person Approved",
                   errorStyle: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w400,
@@ -1108,6 +1352,498 @@ class BookingForm extends StatelessWidget {
             ),
           )
         ],
+      ),
+    );
+  }
+
+  empCode(BuildContext context, BookingProvider provider) {
+    return Padding(
+      padding: AppConstants.all_10,
+      child: Row(
+        children: [
+          Text("Employee Code:",
+              style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black)),
+          AppConstants.w_30,
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.45,
+            height: 50,
+            child: TextFormField(
+              controller: provider.empCode,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              textCapitalization: TextCapitalization.characters,
+              autofocus: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter the Answer';
+                }
+                return null;
+              },
+              onEditingComplete: () {
+                FocusScope.of(context).nextFocus();
+                //addNewPeople.formKey.currentState!.validate();
+              },
+              textAlign: TextAlign.justify,
+              style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black),
+              decoration: InputDecoration(
+                  // contentPadding: AppConstants.all_5,
+                  fillColor: Colors.white,
+                  filled: true,
+                  counterStyle: Theme.of(context).textTheme.bodySmall,
+                  counterText: "",
+                  hintText: "Enter Employee code",
+                  errorStyle: GoogleFonts.inter(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.red),
+                  hintStyle: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w200,
+                      color: Colors.black),
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8),
+                  focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8),
+                  border: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8)),
+              keyboardType: TextInputType.multiline,
+              inputFormatters: [
+                FilteringTextInputFormatter.singleLineFormatter
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  city(BuildContext context, BookingProvider provider) {
+    return Padding(
+      padding: AppConstants.all_10,
+      child: Row(
+        children: [
+          Text("City:",
+              style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black)),
+          AppConstants.w_30,
+          AppConstants.w_20,
+          AppConstants.w_40,
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.45,
+            height: 50,
+            child: TextFormField(
+              controller: provider.city,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              textCapitalization: TextCapitalization.characters,
+              autofocus: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter the Answer';
+                }
+                return null;
+              },
+              onEditingComplete: () {
+                FocusScope.of(context).nextFocus();
+                //addNewPeople.formKey.currentState!.validate();
+              },
+              textAlign: TextAlign.justify,
+              style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black),
+              decoration: InputDecoration(
+                  // contentPadding: AppConstants.all_5,
+                  fillColor: Colors.white,
+                  filled: true,
+                  counterStyle: Theme.of(context).textTheme.bodySmall,
+                  counterText: "",
+                  hintText: "Enter City",
+                  errorStyle: GoogleFonts.inter(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.red),
+                  hintStyle: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w200,
+                      color: Colors.black),
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8),
+                  focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8),
+                  border: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8)),
+              keyboardType: TextInputType.multiline,
+              inputFormatters: [
+                FilteringTextInputFormatter.singleLineFormatter
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  state(BuildContext context, BookingProvider provider) {
+    return Padding(
+      padding: AppConstants.all_10,
+      child: Row(
+        children: [
+          Text("State:",
+              style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black)),
+          AppConstants.w_30,
+          AppConstants.w_20,
+          AppConstants.w_40,
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.45,
+            height: 50,
+            child: TextFormField(
+              controller: provider.state,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              textCapitalization: TextCapitalization.characters,
+              autofocus: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter the Answer';
+                }
+                return null;
+              },
+              onEditingComplete: () {
+                FocusScope.of(context).nextFocus();
+                //addNewPeople.formKey.currentState!.validate();
+              },
+              textAlign: TextAlign.justify,
+              style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black),
+              decoration: InputDecoration(
+                  // contentPadding: AppConstants.all_5,
+                  fillColor: Colors.white,
+                  filled: true,
+                  counterStyle: Theme.of(context).textTheme.bodySmall,
+                  counterText: "",
+                  hintText: "Enter state",
+                  errorStyle: GoogleFonts.inter(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.red),
+                  hintStyle: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w200,
+                      color: Colors.black),
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8),
+                  focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8),
+                  border: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8)),
+              keyboardType: TextInputType.multiline,
+              inputFormatters: [
+                FilteringTextInputFormatter.singleLineFormatter
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  purposeOFVisit(BuildContext context, BookingProvider provider) {
+    return Padding(
+      padding: AppConstants.all_10,
+      child: Row(
+        children: [
+          Text("Purpose of Visit:",
+              style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black)),
+          AppConstants.w_30,
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.45,
+            height: 50,
+            child: TextFormField(
+              controller: provider.poVisit,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              textCapitalization: TextCapitalization.characters,
+              autofocus: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter the Answer';
+                }
+                return null;
+              },
+              onEditingComplete: () {
+                FocusScope.of(context).nextFocus();
+                //addNewPeople.formKey.currentState!.validate();
+              },
+              textAlign: TextAlign.justify,
+              style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black),
+              decoration: InputDecoration(
+                  // contentPadding: AppConstants.all_5,
+                  fillColor: Colors.white,
+                  filled: true,
+                  counterStyle: Theme.of(context).textTheme.bodySmall,
+                  counterText: "",
+                  hintText: "Enter purpose of visit",
+                  errorStyle: GoogleFonts.inter(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.red),
+                  hintStyle: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w200,
+                      color: Colors.black),
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8),
+                  focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8),
+                  border: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8)),
+              keyboardType: TextInputType.multiline,
+              inputFormatters: [
+                FilteringTextInputFormatter.singleLineFormatter
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  movementType(BuildContext context, BookingProvider provider) {
+    return Padding(
+      padding: AppConstants.all_10,
+      child: Row(
+        children: [
+          Text("Movement Type:",
+              style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black)),
+          AppConstants.w_30,
+          Padding(
+            padding: AppConstants.all_5,
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.45,
+              decoration: AppConstants.boxBorderDecoration2,
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton(
+                    dropdownColor: Colors.white,
+                    borderRadius: AppConstants.boxRadius8,
+                    iconDisabledColor: Colors.black,
+                    iconEnabledColor: Colors.black,
+                    isExpanded: true,
+                    value: provider.movementTyep.isEmpty
+                        ? provider.typeMove.first
+                        : provider.movementTyep,
+                    items: provider.typeMove
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Padding(
+                          padding: AppConstants.all_5,
+                          child: Text(value,
+                              style: GoogleFonts.inter(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black)),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) => provider.setMT(value.toString())),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  locationFrom(BuildContext context, BookingProvider provider) {
+    return Padding(
+      padding: AppConstants.all_10,
+      child: Row(
+        children: [
+          Text("Location From:",
+              style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black)),
+          AppConstants.w_40,
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.45,
+            height: 50,
+            child: TextFormField(
+              controller: provider.locFrom,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              textCapitalization: TextCapitalization.characters,
+              autofocus: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter the Answer';
+                }
+                return null;
+              },
+              onEditingComplete: () {
+                FocusScope.of(context).nextFocus();
+                //addNewPeople.formKey.currentState!.validate();
+              },
+              textAlign: TextAlign.justify,
+              style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black),
+              decoration: InputDecoration(
+                  // contentPadding: AppConstants.all_5,
+                  fillColor: Colors.white,
+                  filled: true,
+                  counterStyle: Theme.of(context).textTheme.bodySmall,
+                  counterText: "",
+                  hintText: "Enter Name",
+                  errorStyle: GoogleFonts.inter(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.red),
+                  hintStyle: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w200,
+                      color: Colors.black),
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8),
+                  focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8),
+                  border: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8)),
+              keyboardType: TextInputType.multiline,
+              inputFormatters: [
+                FilteringTextInputFormatter.singleLineFormatter
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  droppingPoint(BuildContext context, BookingProvider provider) {
+    return Padding(
+      padding: AppConstants.all_10,
+      child: Row(
+        children: [
+          Text("Dropping Point:",
+              style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black)),
+          AppConstants.w_40,
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.45,
+            height: 50,
+            child: TextFormField(
+              controller: provider.droppingPoint,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              textCapitalization: TextCapitalization.characters,
+              autofocus: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter the Answer';
+                }
+                return null;
+              },
+              onEditingComplete: () {
+                FocusScope.of(context).nextFocus();
+                //addNewPeople.formKey.currentState!.validate();
+              },
+              textAlign: TextAlign.justify,
+              style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black),
+              decoration: InputDecoration(
+                  // contentPadding: AppConstants.all_5,
+                  fillColor: Colors.white,
+                  filled: true,
+                  counterStyle: Theme.of(context).textTheme.bodySmall,
+                  counterText: "",
+                  hintText: "Enter Dropping Point",
+                  errorStyle: GoogleFonts.inter(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.red),
+                  hintStyle: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w200,
+                      color: Colors.black),
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8),
+                  focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8),
+                  border: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                      borderRadius: AppConstants.boxRadius8)),
+              keyboardType: TextInputType.multiline,
+              inputFormatters: [
+                FilteringTextInputFormatter.singleLineFormatter
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  btn(BuildContext context, String title) {
+    return Center(
+      child: Container(
+        width: 150,
+        height: 50,
+        decoration: const BoxDecoration(
+            color: Colors.black,
+            borderRadius: BorderRadius.all(Radius.circular(20))),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
       ),
     );
   }

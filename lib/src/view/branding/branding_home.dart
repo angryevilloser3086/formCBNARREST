@@ -38,7 +38,7 @@ class BrandingScreen extends StatelessWidget {
           child: Stack(
             children: [
               Positioned(
-                  child: Container(
+                  child: SizedBox(
                 height: MediaQuery.of(context).size.height,
                 child: Center(
                   child: Image.asset(

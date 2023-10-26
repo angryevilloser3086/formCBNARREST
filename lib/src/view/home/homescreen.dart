@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../utils/app_utils.dart';
 import '../bookingmodule/booking form/booking_form.dart';
+import '../bookingmodule/list_req/requests.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -14,7 +15,10 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => HomeProvider(),
+      create: (context) {
+        Provider.of<HomeProvider>(context, listen: false).init();
+        return HomeProvider();
+      },
       child: WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(
@@ -83,7 +87,9 @@ class HomeScreen extends StatelessWidget {
                       AppConstants.h_10,
                       firstRow(context),
                       AppConstants.h_10,
-                      secondRow(context)
+                      Consumer<HomeProvider>(builder: (_, provider, child) {
+                        return secondRow(context, provider);
+                      }),
                     ],
                   ),
                 ),
@@ -118,15 +124,35 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  secondRow(BuildContext context) {
+  secondRow(BuildContext context, HomeProvider provider) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
+        if (provider.level.isNotEmpty)
+          Selector<HomeProvider, String>(
+              selector: (p0, p1) => p1.level,
+              builder: (context, provider, child) {
+                if (int.parse(provider) >= 1) {
+                  return InkWell(
+                    onTap: () =>
+                        AppConstants.moveNextstl(context, const BookingForm()),
+                    child: Padding(
+                      padding: AppConstants.all_10,
+                      child: cardItem(
+                          "Raise a Request", "assets/images/ic_booking.png"),
+                    ),
+                  );
+                } else {
+                  return Container();
+                }
+              }),
+        AppConstants.w_5,
         InkWell(
-          onTap: () => AppConstants.moveNextstl(context, const BookingForm()),
+          onTap: () => AppConstants.moveNextstl(context, const MyRequests()),
           child: Padding(
             padding: AppConstants.all_10,
-            child: cardItem("Raise a Request", "assets/images/ic_booking.png"),
+            child: cardItem(
+                "Requests \n                ", "assets/images/ic_request.png"),
           ),
         ),
       ],
@@ -162,16 +188,21 @@ class HomeScreen extends StatelessWidget {
               image: DecorationImage(
                   image: AssetImage(image), fit: BoxFit.contain),
               borderRadius: const BorderRadius.all(Radius.circular(10))),
-          height: 100,
-          width: 100,
+          height: 75,
+          width: 75,
         ),
         Align(
           alignment: Alignment.topLeft,
-          child: Text(title,
-              style: GoogleFonts.poppins(
-                  color: Colors.black,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500)),
+          child: SizedBox(
+            width: 150,
+            child: Text(title,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                style: GoogleFonts.poppins(
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500)),
+          ),
         )
       ],
     );

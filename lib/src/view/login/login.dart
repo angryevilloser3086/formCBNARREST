@@ -71,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen>
                       return p3q1(
                           context, provider, "Please Enter the password");
                     }),
-
+                    AppConstants.h_10,
                     Consumer<LoginProvider>(builder: (_, provider, child) {
                       return InkWell(
                         onTap: () {
@@ -79,17 +79,17 @@ class _LoginScreenState extends State<LoginScreen>
                               email: provider.userID.text,
                               password: provider.passWord.text);
                         },
-                        child: btn(context, "Next"),
+                        child: btn(context, "Login"),
                       );
                     }),
-                    Consumer<LoginProvider>(builder: (_, provider, child) {
-                      return InkWell(
-                        onTap: () {
-                          provider.createUserLogins(_);
-                        },
-                        child: btn(context, "create"),
-                      );
-                    }),
+                    // Consumer<LoginProvider>(builder: (_, provider, child) {
+                    //   return InkWell(
+                    //     onTap: () {
+                    //       provider.createUserLogins(_);
+                    //     },
+                    //     child: btn(context, "create"),
+                    //   );
+                    // }),
                     // InkWell(
                     //   onTap: () {
                     //     setState(() {
@@ -311,11 +311,11 @@ class _LoginScreenState extends State<LoginScreen>
   btn(BuildContext context, String title) {
     return Center(
       child: Container(
-        width: 100,
+        width: 150,
         height: 50,
         decoration: const BoxDecoration(
             color: Colors.black,
-            borderRadius: BorderRadius.all(Radius.circular(20))),
+            borderRadius: BorderRadius.all(Radius.circular(10))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,

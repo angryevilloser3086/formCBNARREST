@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'src/app.dart';
 import 'src/firebase_options.dart';
 import 'src/network/api_request.dart';
+
 const USE_DATABASE_EMULATOR = true;
 // The port we've set the Firebase Database emulator to run on via the
 // `firebase.json` configuration file.
@@ -19,17 +20,19 @@ final emulatorHost =
 void main() async {
   // Set up the SettingsController, which will glue user settings to multiple
   // Flutter Widgets.
-  ApiRequest apiRequest= ApiRequest();
-   WidgetsFlutterBinding.ensureInitialized();
+  ApiRequest apiRequest = ApiRequest();
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
   if (USE_DATABASE_EMULATOR) {
     //FirebaseDatabase.instance.useDatabaseEmulator(emulatorHost, emulatorPort);
-    FirebaseDatabase.instanceFor(app: await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  ),databaseURL: apiRequest.dbUrl);
+    FirebaseDatabase.instanceFor(
+        app: await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        ),
+        databaseURL: apiRequest.dbUrl);
   }
   runApp(const MyApp());
 }

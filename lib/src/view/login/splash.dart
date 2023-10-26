@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form/src/view/home/homescreen.dart';
 
@@ -15,6 +16,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   bool showLoader = false;
   SharedPref sharedPref = SharedPref();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   void initState() {
     showLoader = true;
@@ -24,24 +26,32 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void checkEmp() {
     //var body = FirebaseAuth.instance.currentUser;
-    sharedPref.read('mail').then((value) {
-      if (value.toString().isNotEmpty) {
-        setState(() {
-          showLoader = false;
-          AppConstants.moveNextClearAll(context, const HomeScreen());
-        });
-      } else {
+    // _auth.currentUser!.getIdToken()
+    if (_auth.currentUser != null) {
+      sharedPref.read('mail').then((value) {
+        if (value.toString().isNotEmpty) {
+          setState(() {
+            showLoader = false;
+            AppConstants.moveNextClearAll(context, const HomeScreen());
+          });
+        } else {
+          setState(() {
+            showLoader = false;
+            AppConstants.moveNextstl(context, const LoginScreen());
+          });
+        }
+      }).catchError((err) {
         setState(() {
           showLoader = false;
           AppConstants.moveNextstl(context, const LoginScreen());
         });
-      }
-    }).catchError((err) {
+      });
+    } else {
       setState(() {
         showLoader = false;
         AppConstants.moveNextstl(context, const LoginScreen());
       });
-    });
+    }
   }
 
   @override
